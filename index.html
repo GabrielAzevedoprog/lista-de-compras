@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras Funcional</title>
+    <style>
+        /* --- ESTILOS GERAIS E RESPONSIVIDADE --- */
+        :root {
+            --primary-color: #2ec4b6;
+            --bg-color: #f6f6f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        header h1 {
+            color: #1a1a1a;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 4px solid var(--primary-color);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Grid que se adapta a PCs (3 colunas) e Celulares (1 coluna) */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* --- CARDS DE CATEGORIAS --- */
+        .category-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .category-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #111;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-list {
+            list-style: none;
+        }
+
+        /* --- ITENS DA LISTA --- */
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Customização do Checkbox */
+        .product-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Nome do Produto Editável */
+        .product-name {
+            font-size: 1rem;
+            flex-grow: 1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .product-name:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .product-name:focus {
+            background-color: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 196, 182, 0.2);
+        }
+
+        /* Estilo visual quando o produto for marcado */
+        .product-item.checked .product-name {
+            text-decoration: line-through;
+            color: #aaaaaa;
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lista de Compras</h1>
+    </header>
+
+    <div class="container" id="list-container">
+        <!-- As categorias e produtos serão gerados dinamicamente aqui pelo JavaScript -->
+    </div>
+
+    <script>
+        // Estrutura completa de dados baseada nas imagens anexadas
+        const shoppingData = [
+            {
+                category: "Frutas, Verduras e Legumes",
+                products: ["Banana", "Maçã", "Uva", "Tomate", "Cebola", "Alho", "Batata", "Cenoura", "Alface"]
+            },
+            {
+                category: "Padaria e Matinais",
+                products: ["Pão de Forma", "Pão Francês", "Café", "Açúcar", "Adoçante", "Bolo", "Cereais", "Biscoito"]
+            },
+            {
+                category: "Carnes e Peixes",
+                products: ["Carne Moída", "Frango (Peito)", "Bife de Carne", "Peixe", "Salsicha", "Linguiça"]
+            },
+            {
+                category: "Laticínios e Frios",
+                products: ["Leite", "Manteiga / Margarina", "Queijo", "Presunto", "Iogurte", "Creme de Leite", "Requeijão"]
+            },
+            {
+                category: "Mercearia / Despensa",
+                products: ["Arroz", "Feijão", "Macarrão", "Molho de Tomate", "Óleo", "Azeite", "Sal", "Farinha de Trigo", "Milho / Ervilha"]
+            },
+            {
+                category: "Bebidas",
+                products: ["Água", "Suco", "Refrigerante", "Cerveja", "Vinho"]
+            },
+            {
+                category: "Higiene Pessoal",
+                products: ["Shampoo", "Condicionador", "Sabonete", "Creme Dental", "Escova de Dentes", "Desodorante", "Papel Higiênico"]
+            },
+            {
+                category: "Limpeza",
+                products: ["Detergente", "Sabão em Pó / Líquido", "Amaciante", "Desinfetante", "Água Sanitária", "Esponja", "Saco de Lixo"]
+            },
+            {
+                category: "Utilidades / Outros",
+                products: ["Papel Alumínio", "Guardanapo", "Fósforo / Acendedor", "Ração do Pet"]
+            }
+        ];
+
+        const container = document.getElementById('list-container');
+
+        // Função para renderizar a lista na tela
+        function renderList() {
+            shoppingData.forEach((item, catIndex) => {
+                // Cria o card da categoria
+                const card = document.createElement('div');
+                card.className = 'category-card';
+
+                const title = document.createElement('h2');
+                title.textContent = item.category;
+                card.appendChild(title);
+
+                const ul = document.createElement('ul');
+                ul.className = 'product-list';
+
+                // Cria cada produto da categoria
+                item.products.forEach((product, prodIndex) => {
+                    const li = document.createElement('li');
+                    li.className = 'product-item';
+
+                    // Caixa de seleção (Checkbox)
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            li.classList.add('checked');
+                        } else {
+                            li.classList.remove('checked');
+                        }
+                    });
+
+                    // Nome do produto (Editável)
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'product-name';
+                    nameSpan.contentEditable = true;
+                    nameSpan.textContent = product;
+                    nameSpan.spellcheck = false;
+
+                    // Evita quebra de linha ao apertar Enter, apenas salva a edição tirando o foco
+                    nameSpan.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.blur();
+                        }
+                    });
+
+                    li.appendChild(checkbox);
+                    li.appendChild(nameSpan);
+                    ul.appendChild(li);
+                });
+
+                card.appendChild(ul);
+                container.appendChild(card);
+            });
+        }
+
+        // Inicializa a lista ao carregar a página
+        renderList();
+    </script>
+</body>
+</html>
